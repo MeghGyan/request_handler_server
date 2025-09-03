@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import { ErrorCode, HttpException } from "./exceptions/root";
 import { InternalException } from "./exceptions/internal-exception";
+import { Prisma } from "@prisma/client";
 export const errorHandler =(method : Function) =>{
     return async(req:Request,res:Response,next:NextFunction)=>{
         try{
@@ -10,7 +11,8 @@ export const errorHandler =(method : Function) =>{
             if(error instanceof HttpException){
                 //it is handled already
                 exception=error;
-            }else{
+            } // else if (error instanceof Prisma.PrismaClientKnownRequestError){}
+            else{
                 exception = new InternalException('Something went wrong',error,ErrorCode.INTERNAL_EXCEPTION)
             }
             next(exception);

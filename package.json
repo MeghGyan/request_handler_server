@@ -2,6 +2,9 @@
   "name": "user_server",
   "version": "1.0.0",
   "main": "index.js",
+  "publishConfig": {
+    "registry": "http://192.168.3.42:8081/repository/request_handler_server/"
+  },
   "scripts": {
     "dev": "node ./dist/index.js",
     "build": "tsx -b",

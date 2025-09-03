@@ -16,8 +16,8 @@ export const signup = async (
   res: Response,
   next: NextFunction
 ) => {
-   SignupSchema.parse(req.body);
-    const { email, password, username } = req.body;
+   const parsedBody = SignupSchema.parse(req.body);
+    const { email, password, username } = parsedBody;
     let user = await prismaClient.user.findFirst({
       where: {
         email,
@@ -76,7 +76,8 @@ export const login = async (req: Request, res: Response, next: NextFunction) => 
 };
 
 export const refresh = async (req: Request, res: Response, next: NextFunction) => {
-  console.log('refresh');
+
+
   const { refresh_token } = req.body;
 
   if (!refresh_token)

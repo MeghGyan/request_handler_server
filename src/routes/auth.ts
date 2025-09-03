@@ -8,5 +8,5 @@ const authRoutes:Router = Router();
 authRoutes.post('/signup',errorHandler( signup))
 authRoutes.post('/login', errorHandler(login))
 authRoutes.get('/refresh',errorHandler(refresh))
-authRoutes.get('/me',[authMiddleware],errorHandler(me))
+authRoutes.get('/me', authMiddleware, errorHandler(me))
 export default authRoutes;
