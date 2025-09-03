@@ -6,7 +6,6 @@ import { rootRouter } from './routes';
 import { PrismaClient } from '../generated/prisma';
 import { PORT } from './secret';
 import { errorMiddleware } from './middlewares/errors';
-import { SignupSchema } from './schemas/user';
 
 
 dotenv.config();

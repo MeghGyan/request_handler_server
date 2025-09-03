@@ -28,6 +28,7 @@ const authMiddleware = async(req:Request, res:Response, next:NextFunction)=>{
         next()
     }catch(error){
         next(new UnauthorizedException("Unauthorized",ErrorCode.UNAUTHORIZED))
+        console.log(error);
     }
 }
 export default authMiddleware;
