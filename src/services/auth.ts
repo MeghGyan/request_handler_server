@@ -16,15 +16,14 @@ export const generateHashRefreshToken = async (userId: string) => {
   const refresh_token = jwt.sign({ userId: userId }, JWT_REFRESH_SECRET, {
     expiresIn: `${REFRESH_TOKEN_EXPIRY_DAYS}d`,
   });
+
   const expiresAt = new Date();
   expiresAt.setDate(expiresAt.getDate() + 7);
   await prismaClient.refreshToken.create({
     data: {
       userId: userId,
       tokenHash:refresh_token,
-      expiresAt: new Date(
-        Date.now() + REFRESH_TOKEN_EXPIRY_DAYS * 24 * 60 * 60 * 1000
-      ),
+      expiresAt
     },
   });
   return refresh_token;

@@ -22,7 +22,7 @@ const errorHandler = (method) => {
             if (error instanceof root_1.HttpException) {
                 //it is handled already
                 exception = error;
-            }
+            } // else if (error instanceof Prisma.PrismaClientKnownRequestError){}
             else {
                 exception = new internal_exception_1.InternalException('Something went wrong', error, root_1.ErrorCode.INTERNAL_EXCEPTION);
             }

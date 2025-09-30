@@ -49,7 +49,7 @@ const secret_1 = require("../secret");
 const __1 = require("..");
 const authMiddleware = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     //1. extract token from header
-    const access_token = req.headers.authorization;
+    const access_token = req.cookies.access_token;
     //2. if !token throw error of unauthorized
     if (!access_token) {
         next(new unauthorized_1.UnauthorizedException("Unauthorized", root_1.ErrorCode.UNAUTHORIZED));
@@ -57,6 +57,7 @@ const authMiddleware = (req, res, next) => __awaiter(void 0, void 0, void 0, fun
     try {
         //3. if token is present -> verify it extract the payload
         const payload = jwt.verify(access_token, secret_1.JWT_ACCESS_SECRET);
+        console.log('payload in auth_middleware', payload);
         //4. to get the user from the payload
         const user = yield __1.prismaClient.user.findFirst({
             where: {
@@ -72,6 +73,7 @@ const authMiddleware = (req, res, next) => __awaiter(void 0, void 0, void 0, fun
     }
     catch (error) {
         next(new unauthorized_1.UnauthorizedException("Unauthorized", root_1.ErrorCode.UNAUTHORIZED));
+        console.log(error);
     }
 });
 exports.default = authMiddleware;

@@ -9,3 +9,4 @@ export const errorMiddleware=(error:HttpException,req : Request,res:Response,nex
         errors:error.errors
     })
 }
+

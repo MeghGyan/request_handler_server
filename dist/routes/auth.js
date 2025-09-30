@@ -11,5 +11,5 @@ const authRoutes = (0, express_1.Router)();
 authRoutes.post('/signup', (0, error_handler_1.errorHandler)(auth_1.signup));
 authRoutes.post('/login', (0, error_handler_1.errorHandler)(auth_1.login));
 authRoutes.get('/refresh', (0, error_handler_1.errorHandler)(auth_1.refresh));
-authRoutes.get('/me', [auth_2.default], (0, error_handler_1.errorHandler)(auth_1.me));
+authRoutes.get('/me', auth_2.default, (0, error_handler_1.errorHandler)(auth_1.me));
 exports.default = authRoutes;

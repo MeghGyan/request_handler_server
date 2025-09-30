@@ -24,8 +24,8 @@ const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const secret_1 = require("../secret");
 const not_found_1 = require("../exceptions/not-found");
 const signup = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    user_1.SignupSchema.parse(req.body);
-    const { email, password, username } = req.body;
+    const parsedBody = user_1.SignupSchema.parse(req.body);
+    const { email, password, username } = parsedBody;
     let user = yield __1.prismaClient.user.findFirst({
         where: {
             email,
@@ -43,12 +43,22 @@ const signup = (req, res, next) => __awaiter(void 0, void 0, void 0, function* (
     });
     const access_token = (0, auth_1.generateAccessToken)(user.id);
     const refresh_token = yield (0, auth_1.generateHashRefreshToken)(user.id);
+    res.cookie("access_token", access_token, {
+        httpOnly: true, // not accessible via JS
+        secure: true, // only over HTTPS (set false in dev)
+        sameSite: "strict", // CSRF protection
+        maxAge: 15 * 60 * 1000,
+    });
+    res.cookie("refresh_token", refresh_token, {
+        httpOnly: true,
+        secure: true,
+        sameSite: "strict",
+        maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
     res.json({
         id: user.id,
         email: user.email,
-        username: user.username,
-        access_token,
-        refresh_token,
+        username: user.username
     });
 });
 exports.signup = signup;
@@ -64,23 +74,32 @@ const login = (req, res, next) => __awaiter(void 0, void 0, void 0, function* ()
     }
     const access_token = (0, auth_1.generateAccessToken)(user.id);
     const refresh_token = yield (0, auth_1.generateHashRefreshToken)(user.id);
+    res.cookie("access_token", access_token, {
+        httpOnly: true, // not accessible via JS
+        //secure: true,         // only over HTTPS (set false in dev)
+        sameSite: "strict", // CSRF protection
+        maxAge: 15 * 60 * 1000,
+    });
+    res.cookie("refresh_token", refresh_token, {
+        httpOnly: true,
+        //secure: true,
+        sameSite: "strict",
+        maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
     res.json({
         id: user.id,
         email: user.email,
         username: user.username,
-        access_token,
-        refresh_token,
     });
 });
 exports.login = login;
 const refresh = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    console.log('refresh');
-    const { refresh_token } = req.body;
+    const { refresh_token } = req.cookies;
     if (!refresh_token)
         return res.status(401).json({ message: "Missing token" });
     try {
         const decoded = jsonwebtoken_1.default.verify(refresh_token, secret_1.JWT_REFRESH_SECRET);
-        const storedTokenEntry = yield __1.prismaClient.refreshToken.findUnique({
+        const storedTokenEntry = yield __1.prismaClient.refreshToken.delete({
             where: { tokenHash: refresh_token },
         });
         if (!storedTokenEntry) {
@@ -94,12 +113,20 @@ const refresh = (req, res, next) => __awaiter(void 0, void 0, void 0, function* 
         }
         const access_token = (0, auth_1.generateAccessToken)(decoded.userId);
         const new_refresh_token = yield (0, auth_1.generateHashRefreshToken)(decoded.userId);
-        yield __1.prismaClient.refreshToken.delete({
-            where: { tokenHash: refresh_token },
+        res.cookie("access_token", access_token, {
+            httpOnly: true,
+            //secure: true,         
+            sameSite: "strict",
+            maxAge: 15 * 60 * 1000,
         });
-        return res.json({
-            access_token,
-            refresh_token: new_refresh_token,
+        res.cookie("refresh_token", new_refresh_token, {
+            httpOnly: true,
+            //secure: true,
+            sameSite: "strict",
+            maxAge: 7 * 24 * 60 * 60 * 1000,
+        });
+        res.json({
+            message: "Updated token"
         });
     }
     catch (err) {
@@ -107,9 +134,6 @@ const refresh = (req, res, next) => __awaiter(void 0, void 0, void 0, function* 
     }
 });
 exports.refresh = refresh;
-function toSafeUser(user) {
-    return Object.assign(Object.assign({}, user), { password: null });
-}
 const me = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const safeUser = (0, auth_1.getSafeUser)(req.user);
     res.json(safeUser);

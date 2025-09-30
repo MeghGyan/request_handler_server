@@ -16,7 +16,7 @@ dotenv_1.default.config();
 const app = (0, express_1.default)();
 const port = secret_1.PORT;
 exports.prismaClient = new prisma_1.PrismaClient({
-    log: ['query'],
+//log: ['query'],
 });
 app.use(express_1.default.json());
 app.use(express_1.default.urlencoded({ extended: true }));

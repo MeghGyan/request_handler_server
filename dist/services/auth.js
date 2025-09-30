@@ -34,7 +34,7 @@ const generateHashRefreshToken = (userId) => __awaiter(void 0, void 0, void 0, f
         data: {
             userId: userId,
             tokenHash: refresh_token,
-            expiresAt: new Date(Date.now() + REFRESH_TOKEN_EXPIRY_DAYS * 24 * 60 * 60 * 1000),
+            expiresAt
         },
     });
     return refresh_token;

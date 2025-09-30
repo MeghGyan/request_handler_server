@@ -12,7 +12,7 @@ dotenv.config();
 const app:Express = express();
 const port = PORT
 export const prismaClient = new PrismaClient({
-    log: ['query'],
+    //log: ['query'],
 })
 
 app.use(express.json());
@@ -26,7 +26,7 @@ app.get("/", (req: Request, res: Response) => {
 
 app.use('/api', rootRouter)
 
-app.use(errorMiddleware)
+app.use(errorMiddleware);
 app.listen(port, () => {
   console.log(`User server is running on port ${port}`);
 });

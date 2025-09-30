@@ -21,14 +21,8 @@ const getRecentConversations = (req, res) => __awaiter(void 0, void 0, void 0, f
         skip: (page - 1) * pageSize,
         take: pageSize,
     });
-    const totalCount = yield __1.prismaClient.conversation.count({
-        where: { userId },
-    });
     res.json({ conversations,
-        pagination: {
-            page,
-            totalCount,
-            totalPages: Math.ceil(totalCount / pageSize),
-        }, });
+        page,
+    });
 });
 exports.getRecentConversations = getRecentConversations;

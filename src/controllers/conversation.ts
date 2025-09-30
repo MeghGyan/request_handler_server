@@ -14,15 +14,9 @@ export const getRecentConversations =async(req: Request, res:Response)=>{
     skip: (page - 1) * pageSize,
     take: pageSize,
     });
-    const totalCount = await prismaClient.conversation.count({
-    where: { userId },
-    });
     res.json(
     {conversations,
-    pagination: {
-      page,
-      totalCount,
-      totalPages: Math.ceil(totalCount / pageSize),
-    },}
+    page,
+    }
     );
 }

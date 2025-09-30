@@ -6,7 +6,7 @@ import { JWT_ACCESS_SECRET } from "../secret";
 import { prismaClient } from "..";
 const authMiddleware = async(req:Request, res:Response, next:NextFunction)=>{
     //1. extract token from header
-    const access_token = req.headers.authorization;
+    const access_token = req.cookies.access_token ;
     //2. if !token throw error of unauthorized
     if(!access_token){
         next(new UnauthorizedException("Unauthorized",ErrorCode.UNAUTHORIZED))
@@ -14,6 +14,7 @@ const authMiddleware = async(req:Request, res:Response, next:NextFunction)=>{
     try{
          //3. if token is present -> verify it extract the payload
         const payload = jwt.verify(access_token,JWT_ACCESS_SECRET)
+        console.log('payload in auth_middleware',payload);
         //4. to get the user from the payload
         const user=await prismaClient.user.findFirst({
             where:{
